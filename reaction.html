@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reaction Time</title>
+    <style>
+        body {
+            background: #f00;
+            padding-top: 40vh;
+            font-size: 6rem;
+            color: white;
+            text-align: center;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+</head>
+<body>
+<script>
+    // config
+    const config = {
+        cooldown: 1500,
+        maxTime: 8000,
+        minTime: 1500,
+    };
+    // state variables
+    let onReact = falseStart;
+    let triggeredAt;
+    let timer;
+    // state modifier functions
+    function start () {
+        setBack('#f00');
+        timer = setTimeout(
+            trigger,
+            Math.random() * (location.hash ? location.hash.slice(1) * 1000 : config.maxTime) + config.minTime,
+        );
+        onReact = falseStart;
+    }
+    function trigger () {
+        setBack('#0f0');
+        triggeredAt = Date.now();
+        onReact = react;
+    }
+    function falseStart() {
+        clearTimeout(timer);
+        setBack('#000', 'Oof.');   
+        cooldown();
+    }
+    function react () {
+        setBack('#00f', `${Date.now() - triggeredAt}ms`);
+        cooldown();
+    }
+    // helpers
+    function setBack (c, t = '') {
+        document.body.textContent = t;
+        document.body.style.background = c;
+    }
+    function cooldown () {
+        onReact = noop;
+        setTimeout(() => onReact = start, config.cooldown);
+    }
+    function noop () {}
+    // main loop setup
+    function listener () {
+        onReact();
+    }
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchstart', listener);
+    document.addEventListener('keydown', listener);
+    document.addEventListener('wheel', listener);
+    start();
+</script>
+</body>
+</html>
